@@ -9,15 +9,51 @@ This Python script, written in Python 3.12, is designed to perform on Huawei rou
 
 The script is organized into distinct sections, each serving a specific purpose. 
 
-### 1. Function Definitions
+### 1. Connectivity checker Functions
 
-#### Splitting Functions
-- **split_by_dot(s):**
-  - Description: Splits a string at the first occurrence of a dot and returns a pandas Series.
-- **split_by_Vlanif(s):**
-  - Description: Splits a string at the first occurrence of 'Vlanif' and returns a pandas Series.
-- **split_by_slash(s):**
-  - Description: Splits a string at the first occurrence of '/-' and returns a pandas Series.
+The provided code defines a function `is_pingable(i)` that checks the pingability of a given IP address. Here's an explanation of the code:
+
+```python
+import subprocess
+
+def is_pingable(i):
+    """
+    Checks if a given IP address is pingable.
+
+    Args:
+    - i (str): IP address to be checked.
+
+    Returns:
+    - None: Prints "PINGABLE" if the IP is pingable, "NOT PINGABLE" otherwise.
+    """
+    try:
+        # Use subprocess to run the 'ping' command with the given IP address
+        subprocess.check_output(["ping", "-c", "1", i])
+        # If the subprocess runs successfully, print "PINGABLE"
+        print("PINGABLE")
+    except subprocess.CalledProcessError:
+        # If there is a subprocess error (e.g., non-zero exit status), print "NOT PINGABLE"
+        print("NOT PINGABLE")
+```
+
+#### Explanation:
+
+- The function `is_pingable` takes a single argument `i`, which is the IP address to be checked for pingability.
+- Inside the function, it uses the `subprocess` module to run the `ping` command.
+- The `subprocess.check_output(["ping", "-c", "1", i])` command runs the ping command with the specified arguments (`-c 1` means send only one ping packet) and captures the output.
+- If the `ping` command runs successfully (i.e., the IP is pingable), the function prints "PINGABLE."
+- If there is a `subprocess.CalledProcessError` (e.g., non-zero exit status, indicating that the IP is not reachable), it prints "NOT PINGABLE."
+
+#### Usage:
+
+```python
+# Example usage of the function
+ip_address_to_check = "192.168.1.1"
+is_pingable(ip_address_to_check)
+```
+
+The function provides a simple way to check the pingability of an IP address and can be used as a utility function in scripts where network connectivity needs to be verified.
+
 
 ### 2. Main IPBB Schedule Function
 
