@@ -18,5 +18,5 @@ This network topology monitoring project aims to enhance visibility into the dyn
 
  ## Lets get started
 
- [Guidance](network_topology/guidance.md)
+ [Guidance](guidance.md)
 
