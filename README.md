@@ -16,4 +16,7 @@ In addition to routing tables, the project will also focus on the ARP (Address R
 ## Conclusion
 This network topology monitoring project aims to enhance visibility into the dynamic interactions within a network. Through meticulous data collection and analysis, the system will provide real-time insights into the relationships, configurations, and connectivity status of network elements. This proactive approach enables prompt identification and resolution of potential issues, ensuring the network operates seamlessly and efficiently.
 
- 
+ ## Lets get started
+
+ [Guidance](network_topology/guidance.md)
+

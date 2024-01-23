@@ -55,7 +55,7 @@ is_pingable(ip_address_to_check)
 The function provides a simple way to check the pingability of an IP address and can be used as a utility function in scripts where network connectivity needs to be verified.
 
 
-### 2. Main IPBB Schedule Function
+### 2. Main collector Function
 
 #### ipbb_schedule(i)
 - **Parameters:**
