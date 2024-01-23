@@ -3,89 +3,100 @@
 
 ## Overview
 
-This script performs a scheduled collection of Address Resolution Protocol (ARP) information on multiple devices, creating CSV files for further analysis. It utilizes concurrent execution for efficiency.
+This Python script, written in Python 3.12, is designed to perform an IP Broadband (IPBB) schedule. The script connects to network devices, collects Address Resolution Protocol (ARP) information, and creates CSV files for further analysis. The script leverages multithreading for concurrent execution on multiple devices.
 
-## Table of Contents
+## Script Structure
 
-1. [Description](#description)
-2. [Functions](#functions)
-3. [Dependencies](#dependencies)
-4. [Usage](#usage)
-5. [Error Handling](#error-handling)
-6. [Contributing](#contributing)
-7. [License](#license)
+The script is organized into distinct sections, each serving a specific purpose. 
 
-## Description
+### 1. Function Definitions
 
-The script connects to network devices using SSH and retrieves ARP information, creating CSV files with relevant details such as IP address, MAC address, and VLAN information.
+#### Splitting Functions
+- **split_by_dot(s):**
+  - Description: Splits a string at the first occurrence of a dot and returns a pandas Series.
+- **split_by_Vlanif(s):**
+  - Description: Splits a string at the first occurrence of 'Vlanif' and returns a pandas Series.
+- **split_by_slash(s):**
+  - Description: Splits a string at the first occurrence of '/-' and returns a pandas Series.
 
-## Functions
+### 2. Main IPBB Schedule Function
 
-### 1. `split_by_dot(s)`
+#### ipbb_schedule(i)
+- **Parameters:**
+  - i: IP address of the device.
+- **Description:**
+  - Connects to a network device using the `connector` function.
+  - Retrieves ARP information, MAC address, and hostname.
+  - Processes and cleans the ARP data using pandas.
+  - Handles connection-related errors, timeout errors, and other unexpected errors.
+  - Creates CSV files with processed ARP information.
+  - Executes the IPBB schedule concurrently on multiple devices using ThreadPoolExecutor.
 
-- **Description**: Splits a string at the first occurrence of a dot and returns a pandas Series.
+### 3. Main Execution Block
 
-### 2. `split_by_Vlanif(s)`
+- **if __name__ == "__main__":**
+  - Sets up the script for execution.
+  - Defines paths and initializes variables.
+  - Copies the main IP list to a temporary file.
+  - Retrieves a list of IP addresses from the credential module.
+  - Uses ThreadPoolExecutor to concurrently execute the `ipbb_schedule` function on multiple devices.
 
-- **Description**: Splits a string at the first occurrence of 'Vlanif' and returns a pandas Series.
 
-### 3. `split_by_slash(s)`
+### 4. Multithreading Explanation:
 
-- **Description**: Splits a string at the first occurrence of '/-' and returns a pandas Series.
+```python
+with ThreadPoolExecutor(max_workers=200) as executor:
+    ip_list = [i for i in ip_list]
+    executor.map(ipbb_schedule, ip_list)
+```
 
-### 4. `ipbb_schedule(i)`
+1. **ThreadPoolExecutor:**
+   - The `ThreadPoolExecutor` is a concurrent executor that manages a pool of worker threads. It allows for the execution of functions concurrently in multiple threads.
 
-- **Description**: Performs IPBB schedule to collect ARP information and create CSV files.
-- **Parameters**:
-  - `i`: IP address of the device.
+2. **max_workers=200:**
+   - It specifies the maximum number of worker threads in the pool. In this case, it's set to 200, meaning that up to 200 devices can be processed concurrently.
 
-## Dependencies
+3. **ip_list = [i for i in ip_list]:**
+   - This list comprehension ensures that the list of IP addresses (`ip_list`) is prepared for concurrent execution. It's a common practice to convert the iterable to a list before passing it to `executor.map`.
 
-- [pandas](https://pandas.pydata.org/)
-- [cfg.connector](#) (Refer to the connector documentation for details)
-- [cfg.credential](#) (Credentials handling module)
-- [os](https://docs.python.org/3/library/os.html)
-- [time](https://docs.python.org/3/library/time.html)
-- [re](https://docs.python.org/3/library/re.html)
-- [datetime](https://docs.python.org/3/library/datetime.html)
-- [shutil](https://docs.python.org/3/library/shutil.html)
-- [io](https://docs.python.org/3/library/io.html)
-- [numpy](https://numpy.org/)
-- [schedule](https://schedule.readthedocs.io/en/stable/)
-- [concurrent.futures.ThreadPoolExecutor](https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor)
+4. **executor.map(ipbb_schedule, ip_list):**
+   - The `map` method of the `executor` takes two arguments:
+     - The function to be executed concurrently (`ipbb_schedule` in this case).
+     - The iterable of arguments to be passed to the function (`ip_list`).
+   - The `map` method distributes the function calls across the available threads in the pool.
+
+### Execution Flow:
+
+- The `ThreadPoolExecutor` manages a pool of worker threads (up to the specified maximum) and processes each IP address concurrently.
+- For each IP address, the `ipbb_schedule` function is invoked in a separate thread, allowing multiple devices to be processed simultaneously.
+- The script benefits from the parallelism provided by multithreading, potentially reducing the overall execution time, especially when dealing with a large number of devices.
+
+### Note:
+
+- While multithreading can enhance concurrency, it's essential to be cautious with shared resources and ensure that the functions are thread-safe. In this script, the `ipbb_schedule` function seems to be designed to work independently for each IP address, which aligns well with multithreading.
 
 ## Usage
 
-1. Clone the repository:
+1. **Environment Setup:**
+   - Ensure Python 3.12 or a compatible version is installed.
+   - Install necessary dependencies by running:
+     ```
+     pip install pandas schedule
+     ```
 
-   ```bash
-   git clone https://github.com/yourusername/your-repo.git
-   ```
+2. **Credential Configuration:**
+   - Update the `cfg.credential` module with the necessary credentials.
 
-2. Navigate to the script directory:
+3. **Execution:**
+   - Run the script:
+     ```
+     python script_name.py
+     ```
 
-   ```bash
-   cd your-repo/script-directory
-   ```
+4. **Output:**
+   - CSV files with processed ARP information are saved in the specified directory.
 
-3. Execute the script:
-
-   ```bash
-   python3 your_script.py
-   ```
 
 ## Error Handling
 
-The script includes error handling for various scenarios, including connection errors, timeouts, and general unexpected errors. Specific error messages are printed, and appropriate actions are taken for each type of error.
-
-## Contributing
-
-Feel free to contribute by creating issues, providing feedback, or submitting pull requests.
-
-## License
-
-This script is licensed under the [MIT License](LICENSE).
-
----
-
-Replace the placeholder URLs (`#`) with the actual URLs if you have external documentation for the `cfg.connector` module and `cfg.credential` module. Also, make sure to create a `LICENSE` file in your repository and replace the `[MIT License](LICENSE)` link accordingly.
+- The script includes robust error handling for connection-related issues, timeout errors, and unexpected errors. Appropriate error messages are displayed for each scenario.
