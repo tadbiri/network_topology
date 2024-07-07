@@ -10,11 +10,14 @@ jobs:
    steps:
    - name: Checkout code
      uses: actions/checkout@v3
+     with:
+          node-version: '20'
 
    - name: Set up Python
      uses: actions/setup-python@v4
      with:
        python-version: 3.12
+       node-version: '20'
 
    - name: Install Bandit
      run: pip install bandit
@@ -26,6 +29,7 @@ jobs:
      uses: actions/upload-artifact@v3
      if: always()
      with:
+      node-version: '20'
       name: bandit-findings
       path: bandit-report.json
 
